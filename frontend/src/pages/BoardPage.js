@@ -6,7 +6,6 @@ import {
   Grid,
   Card,
   CardContent,
-  CardMedia,
   TextField,
   Select,
   MenuItem,
@@ -21,7 +20,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import TwitterIcon from '@mui/icons-material/Twitter';
-import { boardAPI } from '../services/api';
+import { mockBoardMembers, filterBoardMembersByRole, searchBoardMembers } from '../data/mockData';
 
 function BoardPage() {
   const [members, setMembers] = useState([]);
@@ -29,38 +28,32 @@ function BoardPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchMembers = async () => {
-      try {
-        const response = await boardAPI.getAllMembers();
-        setMembers(response.data.results || response.data);
-        setFilteredMembers(response.data.results || response.data);
-        setLoading(false);
-      } catch (err) {
-        setError('Failed to load board members. Make sure the backend is running.');
-        setLoading(false);
-      }
-    };
-
-    fetchMembers();
+    // Simulate loading delay for realistic feel
+    setTimeout(() => {
+      setMembers(mockBoardMembers);
+      setFilteredMembers(mockBoardMembers);
+      setLoading(false);
+    }, 500);
   }, []);
 
   useEffect(() => {
     let filtered = members;
 
-    // Apply role filter
+    // Apply role filter first
     if (roleFilter !== 'all') {
-      filtered = filtered.filter((member) => member.role === roleFilter);
+      filtered = filterBoardMembersByRole(roleFilter);
     }
 
     // Apply search filter
     if (searchQuery) {
+      const lowerQuery = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (member) =>
-          member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          member.bio.toLowerCase().includes(searchQuery.toLowerCase())
+          member.name.toLowerCase().includes(lowerQuery) ||
+          member.bio.toLowerCase().includes(lowerQuery) ||
+          member.role_display.toLowerCase().includes(lowerQuery)
       );
     }
 
@@ -77,12 +70,6 @@ function BoardPage() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      {error && (
-        <Alert severity="warning" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-      )}
-
       {/* Header */}
       <Box sx={{ textAlign: 'center', mb: 6 }}>
         <Typography variant="h3" component="h1" gutterBottom fontWeight={700}>
@@ -101,6 +88,7 @@ function BoardPage() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           sx={{ flexGrow: 1, minWidth: 200 }}
+          placeholder="Search by name, role, or bio..."
         />
         <FormControl sx={{ minWidth: 200 }}>
           <InputLabel>Filter by Role</InputLabel>
@@ -121,21 +109,35 @@ function BoardPage() {
         </FormControl>
       </Box>
 
+      {/* Results count */}
+      {(searchQuery || roleFilter !== 'all') && (
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="body2" color="text.secondary">
+            Showing {filteredMembers.length} of {members.length} members
+          </Typography>
+        </Box>
+      )}
+
       {/* Board Members Grid */}
       {filteredMembers.length === 0 ? (
-        <Alert severity="info">No board members found matching your criteria.</Alert>
+        <Alert severity="info">
+          No board members found matching your criteria. Try adjusting your search or filters.
+        </Alert>
       ) : (
         <Grid container spacing={4}>
           {filteredMembers.map((member) => (
             <Grid item xs={12} sm={6} md={4} key={member.id}>
-              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', '&:hover': { boxShadow: 6 } }}>
                 {member.photo ? (
-                  <CardMedia
+                  <Box
                     component="img"
-                    height="250"
-                    image={member.photo}
+                    src={member.photo}
                     alt={member.name}
-                    sx={{ objectFit: 'cover' }}
+                    sx={{
+                      width: '100%',
+                      height: 250,
+                      objectFit: 'cover',
+                    }}
                   />
                 ) : (
                   <Box
@@ -144,23 +146,42 @@ function BoardPage() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      bgcolor: 'grey.200',
+                      background: `linear-gradient(135deg, ${
+                        member.role === 'president' ? '#667eea 0%, #764ba2 100%' :
+                        member.role === 'vice_president' ? '#f093fb 0%, #f5576c 100%' :
+                        member.role === 'secretary' ? '#4facfe 0%, #00f2fe 100%' :
+                        member.role === 'treasurer' ? '#43e97b 0%, #38f9d7 100%' :
+                        member.role === 'event_coordinator' ? '#fa709a 0%, #fee140 100%' :
+                        member.role === 'marketing' ? '#30cfd0 0%, #330867 100%' :
+                        '#a8edea 0%, #fed6e3 100%'
+                      })`,
                     }}
                   >
-                    <Typography variant="h1" color="text.secondary">
+                    <Typography variant="h1" sx={{ color: 'white', fontWeight: 700, fontSize: 80 }}>
                       {member.name.charAt(0)}
                     </Typography>
                   </Box>
                 )}
-                <CardContent sx={{ flexGrow: 1 }}>
+                <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                   <Typography variant="h6" gutterBottom fontWeight={600}>
                     {member.name}
                   </Typography>
-                  <Chip label={member.role_display} color="primary" size="small" sx={{ mb: 2 }} />
-                  <Typography variant="body2" color="text.secondary" paragraph>
+                  <Chip
+                    label={member.role_display}
+                    color={
+                      member.role === 'president' ? 'primary' :
+                      member.role === 'vice_president' ? 'secondary' :
+                      member.role === 'secretary' ? 'info' :
+                      member.role === 'treasurer' ? 'success' :
+                      'default'
+                    }
+                    size="small"
+                    sx={{ mb: 2, width: 'fit-content' }}
+                  />
+                  <Typography variant="body2" color="text.secondary" paragraph sx={{ flexGrow: 1 }}>
                     {member.bio}
                   </Typography>
-                  <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+                  <Box sx={{ display: 'flex', gap: 1, mt: 'auto' }}>
                     {member.email && (
                       <IconButton
                         size="small"
@@ -176,6 +197,7 @@ function BoardPage() {
                         size="small"
                         href={member.linkedin}
                         target="_blank"
+                        rel="noopener noreferrer"
                         aria-label="LinkedIn"
                         color="primary"
                       >
@@ -187,6 +209,7 @@ function BoardPage() {
                         size="small"
                         href={member.github}
                         target="_blank"
+                        rel="noopener noreferrer"
                         aria-label="GitHub"
                         color="primary"
                       >
@@ -198,6 +221,7 @@ function BoardPage() {
                         size="small"
                         href={member.twitter}
                         target="_blank"
+                        rel="noopener noreferrer"
                         aria-label="Twitter"
                         color="primary"
                       >

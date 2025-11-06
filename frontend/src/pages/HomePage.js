@@ -15,31 +15,20 @@ import {
 } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import GroupIcon from '@mui/icons-material/Group';
-import { eventsAPI } from '../services/api';
+import { mockEventStats, getUpcomingEvents } from '../data/mockData';
 
 function HomePage() {
   const [stats, setStats] = useState({ total_events: 0, upcoming_events: 0 });
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [statsRes, eventsRes] = await Promise.all([
-          eventsAPI.getEventStats(),
-          eventsAPI.getUpcomingEvents(),
-        ]);
-        setStats(statsRes.data);
-        setUpcomingEvents(eventsRes.data);
-        setLoading(false);
-      } catch (err) {
-        setError('Failed to load data. Make sure the backend is running.');
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    // Simulate loading delay for realistic feel
+    setTimeout(() => {
+      setStats(mockEventStats);
+      setUpcomingEvents(getUpcomingEvents(6)); // Show 6 events on home page
+      setLoading(false);
+    }, 500);
   }, []);
 
   if (loading) {
@@ -52,12 +41,6 @@ function HomePage() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      {error && (
-        <Alert severity="warning" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-      )}
-
       {/* Hero Section */}
       <Box
         sx={{
@@ -103,7 +86,7 @@ function HomePage() {
               '&:hover': { borderColor: 'grey.100', bgcolor: 'rgba(255,255,255,0.1)' },
             }}
           >
-            View Events
+            View All Events
           </Button>
         </Box>
       </Box>
@@ -137,12 +120,24 @@ function HomePage() {
           >
             <GroupIcon sx={{ fontSize: 48, mb: 1 }} />
             <Typography variant="h3" fontWeight={700}>
-              {stats.total_events}
+              8
             </Typography>
-            <Typography variant="h6">Total Events</Typography>
+            <Typography variant="h6">Board Members</Typography>
           </Card>
         </Grid>
       </Grid>
+
+      {/* Club Mission Section */}
+      <Box sx={{ mb: 6, textAlign: 'center' }}>
+        <Typography variant="h4" gutterBottom fontWeight={700}>
+          Our Mission
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 800, mx: 'auto', mb: 3 }}>
+          ClubHub is dedicated to fostering a supportive community where students can develop their skills,
+          build meaningful connections, and make a positive impact. Through workshops, social events, and
+          volunteer opportunities, we create experiences that help our members grow both personally and professionally.
+        </Typography>
+      </Box>
 
       {/* Upcoming Events Preview */}
       <Box sx={{ mb: 6 }}>
@@ -155,26 +150,48 @@ function HomePage() {
           <Grid container spacing={3}>
             {upcomingEvents.map((event) => (
               <Grid item xs={12} sm={6} md={4} key={event.id}>
-                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                  {event.image && (
+                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', '&:hover': { boxShadow: 6 } }}>
+                  {event.image ? (
                     <CardMedia
                       component="img"
                       height="140"
                       image={event.image}
                       alt={event.title}
                     />
+                  ) : (
+                    <Box
+                      sx={{
+                        height: 140,
+                        background: `linear-gradient(135deg, ${
+                          event.event_type === 'workshop' ? '#667eea 0%, #764ba2 100%' :
+                          event.event_type === 'social' ? '#f093fb 0%, #f5576c 100%' :
+                          event.event_type === 'volunteering' ? '#4facfe 0%, #00f2fe 100%' :
+                          '#43e97b 0%, #38f9d7 100%'
+                        })`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <EventIcon sx={{ fontSize: 60, color: 'white', opacity: 0.8 }} />
+                    </Box>
                   )}
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Chip
                       label={event.event_type_display}
                       size="small"
-                      color="primary"
+                      color={
+                        event.event_type === 'workshop' ? 'primary' :
+                        event.event_type === 'social' ? 'secondary' :
+                        event.event_type === 'volunteering' ? 'info' :
+                        'success'
+                      }
                       sx={{ mb: 1 }}
                     />
                     <Typography variant="h6" gutterBottom>
                       {event.title}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                       {new Date(event.date).toLocaleDateString('en-US', {
                         weekday: 'long',
                         year: 'numeric',
@@ -182,8 +199,11 @@ function HomePage() {
                         day: 'numeric',
                       })}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                       📍 {event.location}
+                    </Typography>
+                    <Typography variant="body2" color="primary" fontWeight={600}>
+                      {event.attendee_count} attending
                     </Typography>
                   </CardContent>
                 </Card>
@@ -191,6 +211,38 @@ function HomePage() {
             ))}
           </Grid>
         )}
+      </Box>
+
+      {/* Call to Action */}
+      <Box
+        sx={{
+          textAlign: 'center',
+          py: 6,
+          px: 3,
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          borderRadius: 2,
+          color: 'white',
+        }}
+      >
+        <Typography variant="h4" gutterBottom fontWeight={700}>
+          Ready to Get Involved?
+        </Typography>
+        <Typography variant="body1" sx={{ mb: 3, maxWidth: 600, mx: 'auto' }}>
+          Join us today and become part of an amazing community of learners, leaders, and changemakers!
+        </Typography>
+        <Button
+          variant="contained"
+          size="large"
+          component={RouterLink}
+          to="/board"
+          sx={{
+            bgcolor: 'white',
+            color: 'primary.main',
+            '&:hover': { bgcolor: 'grey.100' },
+          }}
+        >
+          Meet Our Team
+        </Button>
       </Box>
     </Container>
   );
