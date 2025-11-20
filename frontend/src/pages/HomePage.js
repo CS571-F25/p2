@@ -8,13 +8,12 @@ import {
   Grid,
   Card,
   CardContent,
-  CardMedia,
-  Chip,
   Alert,
   CircularProgress,
 } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import GroupIcon from '@mui/icons-material/Group';
+import EventCard from '../components/EventCard';
 import { mockEventStats, getUpcomingEvents } from '../data/mockData';
 
 function HomePage() {
@@ -45,25 +44,42 @@ function HomePage() {
       <Box
         sx={{
           textAlign: 'center',
-          py: 8,
-          px: 2,
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          borderRadius: 2,
+          py: 10,
+          px: 3,
+          background: 'linear-gradient(135deg, #6366f1 0%, #ec4899 100%)',
+          borderRadius: 5,
           color: 'white',
           mb: 6,
+          position: 'relative',
+          overflow: 'hidden',
+          boxShadow: '0 20px 60px rgba(99, 102, 241, 0.3)',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.2) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.15) 0%, transparent 50%)',
+            animation: 'shimmer 5s ease-in-out infinite',
+          },
+          '@keyframes shimmer': {
+            '0%, 100%': { opacity: 0.5 },
+            '50%': { opacity: 1 },
+          },
         }}
       >
-        <Typography variant="h2" component="h1" gutterBottom fontWeight={700}>
+        <Typography variant="h2" component="h1" gutterBottom fontWeight={800} sx={{ position: 'relative', zIndex: 1, letterSpacing: '-0.02em' }}>
           Welcome to ClubHub
         </Typography>
-        <Typography variant="h5" sx={{ mb: 4, opacity: 0.9 }}>
+        <Typography variant="h5" sx={{ mb: 4, opacity: 0.95, position: 'relative', zIndex: 1, fontWeight: 500 }}>
           Connect, Learn, and Grow Together
         </Typography>
-        <Typography variant="body1" sx={{ mb: 4, maxWidth: 700, mx: 'auto' }}>
+        <Typography variant="body1" sx={{ mb: 4, maxWidth: 700, mx: 'auto', opacity: 0.9, position: 'relative', zIndex: 1, fontSize: '1.1rem', lineHeight: 1.7 }}>
           Join our vibrant community of students dedicated to learning, networking, and making a difference.
           Explore events, meet our amazing board members, and become part of something special.
         </Typography>
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap', position: 'relative', zIndex: 1 }}>
           <Button
             variant="contained"
             size="large"
@@ -72,7 +88,16 @@ function HomePage() {
             sx={{
               bgcolor: 'white',
               color: 'primary.main',
-              '&:hover': { bgcolor: 'grey.100' },
+              px: 4,
+              py: 1.5,
+              fontSize: '1.1rem',
+              fontWeight: 700,
+              boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+              '&:hover': {
+                bgcolor: 'grey.50',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 12px 32px rgba(0,0,0,0.2)',
+              },
             }}
           >
             Meet the Board
@@ -80,10 +105,22 @@ function HomePage() {
           <Button
             variant="outlined"
             size="large"
+            component={RouterLink}
+            to="/events"
             sx={{
               color: 'white',
               borderColor: 'white',
-              '&:hover': { borderColor: 'grey.100', bgcolor: 'rgba(255,255,255,0.1)' },
+              borderWidth: 2,
+              px: 4,
+              py: 1.5,
+              fontSize: '1.1rem',
+              fontWeight: 700,
+              '&:hover': {
+                borderColor: 'white',
+                bgcolor: 'rgba(255,255,255,0.15)',
+                transform: 'translateY(-2px)',
+                borderWidth: 2,
+              },
             }}
           >
             View All Events
@@ -97,32 +134,66 @@ function HomePage() {
           <Card
             sx={{
               textAlign: 'center',
-              py: 3,
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              py: 4,
+              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
               color: 'white',
+              position: 'relative',
+              overflow: 'hidden',
+              boxShadow: '0 8px 32px rgba(99, 102, 241, 0.3)',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'translateY(-4px)',
+                boxShadow: '0 12px 48px rgba(99, 102, 241, 0.4)',
+              },
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '-50%',
+                right: '-50%',
+                width: '200%',
+                height: '200%',
+                background: 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%)',
+              },
             }}
           >
-            <EventIcon sx={{ fontSize: 48, mb: 1 }} />
-            <Typography variant="h3" fontWeight={700}>
+            <EventIcon sx={{ fontSize: 56, mb: 1, position: 'relative', zIndex: 1, filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.2))' }} />
+            <Typography variant="h3" fontWeight={800} sx={{ position: 'relative', zIndex: 1 }}>
               {stats.upcoming_events}
             </Typography>
-            <Typography variant="h6">Upcoming Events</Typography>
+            <Typography variant="h6" fontWeight={600} sx={{ position: 'relative', zIndex: 1 }}>Upcoming Events</Typography>
           </Card>
         </Grid>
         <Grid item xs={12} sm={6}>
           <Card
             sx={{
               textAlign: 'center',
-              py: 3,
-              background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+              py: 4,
+              background: 'linear-gradient(135deg, #ec4899 0%, #f472b6 100%)',
               color: 'white',
+              position: 'relative',
+              overflow: 'hidden',
+              boxShadow: '0 8px 32px rgba(236, 72, 153, 0.3)',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'translateY(-4px)',
+                boxShadow: '0 12px 48px rgba(236, 72, 153, 0.4)',
+              },
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '-50%',
+                right: '-50%',
+                width: '200%',
+                height: '200%',
+                background: 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%)',
+              },
             }}
           >
-            <GroupIcon sx={{ fontSize: 48, mb: 1 }} />
-            <Typography variant="h3" fontWeight={700}>
+            <GroupIcon sx={{ fontSize: 56, mb: 1, position: 'relative', zIndex: 1, filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.2))' }} />
+            <Typography variant="h3" fontWeight={800} sx={{ position: 'relative', zIndex: 1 }}>
               8
             </Typography>
-            <Typography variant="h6">Board Members</Typography>
+            <Typography variant="h6" fontWeight={600} sx={{ position: 'relative', zIndex: 1 }}>Board Members</Typography>
           </Card>
         </Grid>
       </Grid>
@@ -150,63 +221,7 @@ function HomePage() {
           <Grid container spacing={3}>
             {upcomingEvents.map((event) => (
               <Grid item xs={12} sm={6} md={4} key={event.id}>
-                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', '&:hover': { boxShadow: 6 } }}>
-                  {event.image ? (
-                    <CardMedia
-                      component="img"
-                      height="140"
-                      image={event.image}
-                      alt={event.title}
-                    />
-                  ) : (
-                    <Box
-                      sx={{
-                        height: 140,
-                        background: `linear-gradient(135deg, ${
-                          event.event_type === 'workshop' ? '#667eea 0%, #764ba2 100%' :
-                          event.event_type === 'social' ? '#f093fb 0%, #f5576c 100%' :
-                          event.event_type === 'volunteering' ? '#4facfe 0%, #00f2fe 100%' :
-                          '#43e97b 0%, #38f9d7 100%'
-                        })`,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <EventIcon sx={{ fontSize: 60, color: 'white', opacity: 0.8 }} />
-                    </Box>
-                  )}
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Chip
-                      label={event.event_type_display}
-                      size="small"
-                      color={
-                        event.event_type === 'workshop' ? 'primary' :
-                        event.event_type === 'social' ? 'secondary' :
-                        event.event_type === 'volunteering' ? 'info' :
-                        'success'
-                      }
-                      sx={{ mb: 1 }}
-                    />
-                    <Typography variant="h6" gutterBottom>
-                      {event.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      {new Date(event.date).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      📍 {event.location}
-                    </Typography>
-                    <Typography variant="body2" color="primary" fontWeight={600}>
-                      {event.attendee_count} attending
-                    </Typography>
-                  </CardContent>
-                </Card>
+                <EventCard event={event} />
               </Grid>
             ))}
           </Grid>
@@ -217,17 +232,30 @@ function HomePage() {
       <Box
         sx={{
           textAlign: 'center',
-          py: 6,
-          px: 3,
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          borderRadius: 2,
+          py: 8,
+          px: 4,
+          background: 'linear-gradient(135deg, #6366f1 0%, #ec4899 100%)',
+          borderRadius: 5,
           color: 'white',
+          position: 'relative',
+          overflow: 'hidden',
+          boxShadow: '0 20px 60px rgba(99, 102, 241, 0.3)',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'radial-gradient(circle at 30% 70%, rgba(255,255,255,0.2) 0%, transparent 50%)',
+            animation: 'shimmer 5s ease-in-out infinite',
+          },
         }}
       >
-        <Typography variant="h4" gutterBottom fontWeight={700}>
+        <Typography variant="h4" gutterBottom fontWeight={800} sx={{ position: 'relative', zIndex: 1 }}>
           Ready to Get Involved?
         </Typography>
-        <Typography variant="body1" sx={{ mb: 3, maxWidth: 600, mx: 'auto' }}>
+        <Typography variant="body1" sx={{ mb: 3, maxWidth: 600, mx: 'auto', fontSize: '1.1rem', opacity: 0.95, position: 'relative', zIndex: 1 }}>
           Join us today and become part of an amazing community of learners, leaders, and changemakers!
         </Typography>
         <Button
@@ -238,7 +266,18 @@ function HomePage() {
           sx={{
             bgcolor: 'white',
             color: 'primary.main',
-            '&:hover': { bgcolor: 'grey.100' },
+            px: 4,
+            py: 1.5,
+            fontSize: '1.1rem',
+            fontWeight: 700,
+            position: 'relative',
+            zIndex: 1,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+            '&:hover': {
+              bgcolor: 'grey.50',
+              transform: 'translateY(-2px)',
+              boxShadow: '0 12px 32px rgba(0,0,0,0.2)',
+            },
           }}
         >
           Meet Our Team

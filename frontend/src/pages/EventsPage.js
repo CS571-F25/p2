@@ -12,46 +12,46 @@ import {
   Alert,
   CircularProgress,
 } from '@mui/material';
-import BoardMemberCard from '../components/BoardMemberCard';
-import { mockBoardMembers, filterBoardMembersByRole, searchBoardMembers } from '../data/mockData';
+import EventCard from '../components/EventCard';
+import { mockEvents } from '../data/mockData';
 
-function BoardPage() {
-  const [members, setMembers] = useState([]);
-  const [filteredMembers, setFilteredMembers] = useState([]);
+function EventsPage() {
+  const [events, setEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [roleFilter, setRoleFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Simulate loading delay for realistic feel
     setTimeout(() => {
-      setMembers(mockBoardMembers);
-      setFilteredMembers(mockBoardMembers);
+      setEvents(mockEvents);
+      setFilteredEvents(mockEvents);
       setLoading(false);
     }, 500);
   }, []);
 
   useEffect(() => {
-    let filtered = members;
+    let filtered = events;
 
-    // Apply role filter first
-    if (roleFilter !== 'all') {
-      filtered = filterBoardMembersByRole(roleFilter);
+    // Apply type filter first
+    if (typeFilter !== 'all') {
+      filtered = filtered.filter((event) => event.event_type === typeFilter);
     }
 
     // Apply search filter
     if (searchQuery) {
       const lowerQuery = searchQuery.toLowerCase();
       filtered = filtered.filter(
-        (member) =>
-          member.name.toLowerCase().includes(lowerQuery) ||
-          member.bio.toLowerCase().includes(lowerQuery) ||
-          member.role_display.toLowerCase().includes(lowerQuery)
+        (event) =>
+          event.title.toLowerCase().includes(lowerQuery) ||
+          event.description.toLowerCase().includes(lowerQuery) ||
+          event.location.toLowerCase().includes(lowerQuery)
       );
     }
 
-    setFilteredMembers(filtered);
-  }, [searchQuery, roleFilter, members]);
+    setFilteredEvents(filtered);
+  }, [searchQuery, typeFilter, events]);
 
   if (loading) {
     return (
@@ -70,17 +70,17 @@ function BoardPage() {
           mb: 6,
           py: 6,
           px: 3,
-          background: 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)',
+          background: 'linear-gradient(135deg, #6366f1 0%, #ec4899 100%)',
           borderRadius: 5,
           color: 'white',
-          boxShadow: '0 20px 60px rgba(236, 72, 153, 0.3)',
+          boxShadow: '0 20px 60px rgba(99, 102, 241, 0.3)',
         }}
       >
         <Typography variant="h3" component="h1" gutterBottom fontWeight={800}>
-          Meet Our Board
+          All Events
         </Typography>
         <Typography variant="h6" sx={{ maxWidth: 600, mx: 'auto', opacity: 0.95 }}>
-          Our dedicated team of leaders working to make our club the best it can be
+          Discover all the amazing events our club has to offer
         </Typography>
       </Box>
 
@@ -99,7 +99,7 @@ function BoardPage() {
         }}
       >
         <TextField
-          label="Search members"
+          label="Search events"
           variant="outlined"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -110,49 +110,47 @@ function BoardPage() {
               bgcolor: 'white',
             },
           }}
-          placeholder="Search by name, role, or bio..."
+          placeholder="Search by title, description, or location..."
         />
         <FormControl sx={{ minWidth: 200 }}>
-          <InputLabel>Filter by Role</InputLabel>
+          <InputLabel>Filter by Type</InputLabel>
           <Select
-            value={roleFilter}
-            label="Filter by Role"
-            onChange={(e) => setRoleFilter(e.target.value)}
+            value={typeFilter}
+            label="Filter by Type"
+            onChange={(e) => setTypeFilter(e.target.value)}
             sx={{
               bgcolor: 'white',
             }}
           >
-            <MenuItem value="all">All Roles</MenuItem>
-            <MenuItem value="president">President</MenuItem>
-            <MenuItem value="vice_president">Vice President</MenuItem>
-            <MenuItem value="secretary">Secretary</MenuItem>
-            <MenuItem value="treasurer">Treasurer</MenuItem>
-            <MenuItem value="event_coordinator">Event Coordinator</MenuItem>
-            <MenuItem value="marketing">Marketing Director</MenuItem>
-            <MenuItem value="member">Board Member</MenuItem>
+            <MenuItem value="all">All Types</MenuItem>
+            <MenuItem value="workshop">Workshop</MenuItem>
+            <MenuItem value="social">Social</MenuItem>
+            <MenuItem value="volunteering">Volunteering</MenuItem>
+            <MenuItem value="meeting">Meeting</MenuItem>
+            <MenuItem value="other">Other</MenuItem>
           </Select>
         </FormControl>
       </Box>
 
       {/* Results count */}
-      {(searchQuery || roleFilter !== 'all') && (
+      {(searchQuery || typeFilter !== 'all') && (
         <Box sx={{ mb: 3 }}>
           <Typography variant="body2" color="text.secondary">
-            Showing {filteredMembers.length} of {members.length} members
+            Showing {filteredEvents.length} of {events.length} events
           </Typography>
         </Box>
       )}
 
-      {/* Board Members Grid */}
-      {filteredMembers.length === 0 ? (
+      {/* Events Grid */}
+      {filteredEvents.length === 0 ? (
         <Alert severity="info">
-          No board members found matching your criteria. Try adjusting your search or filters.
+          No events found matching your criteria. Try adjusting your search or filters.
         </Alert>
       ) : (
-        <Grid container spacing={4}>
-          {filteredMembers.map((member) => (
-            <Grid item xs={12} sm={6} md={4} key={member.id}>
-              <BoardMemberCard member={member} />
+        <Grid container spacing={3}>
+          {filteredEvents.map((event) => (
+            <Grid item xs={12} sm={6} md={4} key={event.id}>
+              <EventCard event={event} />
             </Grid>
           ))}
         </Grid>
@@ -161,4 +159,4 @@ function BoardPage() {
   );
 }
 
-export default BoardPage;
+export default EventsPage;

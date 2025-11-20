@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import BoardPage from './pages/BoardPage';
+import EventsPage from './pages/EventsPage';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Box component="main" sx={{ flexGrow: 1 }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/events" element={<EventsPage />} />
           <Route path="/board" element={<BoardPage />} />
         </Routes>
       </Box>
