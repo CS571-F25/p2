@@ -4,15 +4,13 @@ import {
   Box,
   Typography,
   Grid,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
   Alert,
   CircularProgress,
 } from '@mui/material';
 import BoardMemberCard from '../components/BoardMemberCard';
+import SectionHeader from '../components/SectionHeader';
+import SearchBar from '../components/SearchBar';
+import FilterDropdown from '../components/FilterDropdown';
 import { mockBoardMembers, filterBoardMembersByRole, searchBoardMembers } from '../data/mockData';
 
 function BoardPage() {
@@ -64,25 +62,11 @@ function BoardPage() {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       {/* Header */}
-      <Box
-        sx={{
-          textAlign: 'center',
-          mb: 6,
-          py: 6,
-          px: 3,
-          background: 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)',
-          borderRadius: 5,
-          color: 'white',
-          boxShadow: '0 20px 60px rgba(236, 72, 153, 0.3)',
-        }}
-      >
-        <Typography variant="h3" component="h1" gutterBottom fontWeight={800}>
-          Meet Our Board
-        </Typography>
-        <Typography variant="h6" sx={{ maxWidth: 600, mx: 'auto', opacity: 0.95 }}>
-          Our dedicated team of leaders working to make our club the best it can be
-        </Typography>
-      </Box>
+      <SectionHeader
+        title="Meet Our Board"
+        subtitle="Our dedicated team of leaders working to make our club the best it can be"
+        gradient="linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)"
+      />
 
       {/* Search and Filter */}
       <Box
@@ -98,40 +82,27 @@ function BoardPage() {
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
         }}
       >
-        <TextField
+        <SearchBar
           label="Search members"
-          variant="outlined"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          sx={{
-            flexGrow: 1,
-            minWidth: 200,
-            '& .MuiOutlinedInput-root': {
-              bgcolor: 'white',
-            },
-          }}
+          onChange={setSearchQuery}
           placeholder="Search by name, role, or bio..."
         />
-        <FormControl sx={{ minWidth: 200 }}>
-          <InputLabel>Filter by Role</InputLabel>
-          <Select
-            value={roleFilter}
-            label="Filter by Role"
-            onChange={(e) => setRoleFilter(e.target.value)}
-            sx={{
-              bgcolor: 'white',
-            }}
-          >
-            <MenuItem value="all">All Roles</MenuItem>
-            <MenuItem value="president">President</MenuItem>
-            <MenuItem value="vice_president">Vice President</MenuItem>
-            <MenuItem value="secretary">Secretary</MenuItem>
-            <MenuItem value="treasurer">Treasurer</MenuItem>
-            <MenuItem value="event_coordinator">Event Coordinator</MenuItem>
-            <MenuItem value="marketing">Marketing Director</MenuItem>
-            <MenuItem value="member">Board Member</MenuItem>
-          </Select>
-        </FormControl>
+        <FilterDropdown
+          label="Filter by Role"
+          value={roleFilter}
+          onChange={setRoleFilter}
+          options={[
+            { value: 'all', label: 'All Roles' },
+            { value: 'president', label: 'President' },
+            { value: 'vice_president', label: 'Vice President' },
+            { value: 'secretary', label: 'Secretary' },
+            { value: 'treasurer', label: 'Treasurer' },
+            { value: 'event_coordinator', label: 'Event Coordinator' },
+            { value: 'marketing', label: 'Marketing Director' },
+            { value: 'member', label: 'Board Member' },
+          ]}
+        />
       </Box>
 
       {/* Results count */}

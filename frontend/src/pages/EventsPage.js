@@ -4,15 +4,13 @@ import {
   Box,
   Typography,
   Grid,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
   Alert,
   CircularProgress,
 } from '@mui/material';
 import EventCard from '../components/EventCard';
+import SectionHeader from '../components/SectionHeader';
+import SearchBar from '../components/SearchBar';
+import FilterDropdown from '../components/FilterDropdown';
 import { mockEvents } from '../data/mockData';
 
 function EventsPage() {
@@ -64,25 +62,11 @@ function EventsPage() {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       {/* Header */}
-      <Box
-        sx={{
-          textAlign: 'center',
-          mb: 6,
-          py: 6,
-          px: 3,
-          background: 'linear-gradient(135deg, #6366f1 0%, #ec4899 100%)',
-          borderRadius: 5,
-          color: 'white',
-          boxShadow: '0 20px 60px rgba(99, 102, 241, 0.3)',
-        }}
-      >
-        <Typography variant="h3" component="h1" gutterBottom fontWeight={800}>
-          All Events
-        </Typography>
-        <Typography variant="h6" sx={{ maxWidth: 600, mx: 'auto', opacity: 0.95 }}>
-          Discover all the amazing events our club has to offer
-        </Typography>
-      </Box>
+      <SectionHeader
+        title="All Events"
+        subtitle="Discover all the amazing events our club has to offer"
+        gradient="linear-gradient(135deg, #6366f1 0%, #ec4899 100%)"
+      />
 
       {/* Search and Filter */}
       <Box
@@ -98,38 +82,25 @@ function EventsPage() {
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
         }}
       >
-        <TextField
+        <SearchBar
           label="Search events"
-          variant="outlined"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          sx={{
-            flexGrow: 1,
-            minWidth: 200,
-            '& .MuiOutlinedInput-root': {
-              bgcolor: 'white',
-            },
-          }}
+          onChange={setSearchQuery}
           placeholder="Search by title, description, or location..."
         />
-        <FormControl sx={{ minWidth: 200 }}>
-          <InputLabel>Filter by Type</InputLabel>
-          <Select
-            value={typeFilter}
-            label="Filter by Type"
-            onChange={(e) => setTypeFilter(e.target.value)}
-            sx={{
-              bgcolor: 'white',
-            }}
-          >
-            <MenuItem value="all">All Types</MenuItem>
-            <MenuItem value="workshop">Workshop</MenuItem>
-            <MenuItem value="social">Social</MenuItem>
-            <MenuItem value="volunteering">Volunteering</MenuItem>
-            <MenuItem value="meeting">Meeting</MenuItem>
-            <MenuItem value="other">Other</MenuItem>
-          </Select>
-        </FormControl>
+        <FilterDropdown
+          label="Filter by Type"
+          value={typeFilter}
+          onChange={setTypeFilter}
+          options={[
+            { value: 'all', label: 'All Types' },
+            { value: 'workshop', label: 'Workshop' },
+            { value: 'social', label: 'Social' },
+            { value: 'volunteering', label: 'Volunteering' },
+            { value: 'meeting', label: 'Meeting' },
+            { value: 'other', label: 'Other' },
+          ]}
+        />
       </Box>
 
       {/* Results count */}

@@ -7,13 +7,13 @@ import {
   Button,
   Grid,
   Card,
-  CardContent,
   Alert,
   CircularProgress,
 } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import GroupIcon from '@mui/icons-material/Group';
 import EventCard from '../components/EventCard';
+import HeroSection from '../components/HeroSection';
 import { mockEventStats, getUpcomingEvents } from '../data/mockData';
 
 function HomePage() {
@@ -41,92 +41,13 @@ function HomePage() {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       {/* Hero Section */}
-      <Box
-        sx={{
-          textAlign: 'center',
-          py: 10,
-          px: 3,
-          background: 'linear-gradient(135deg, #6366f1 0%, #ec4899 100%)',
-          borderRadius: 5,
-          color: 'white',
-          mb: 6,
-          position: 'relative',
-          overflow: 'hidden',
-          boxShadow: '0 20px 60px rgba(99, 102, 241, 0.3)',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.2) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.15) 0%, transparent 50%)',
-            animation: 'shimmer 5s ease-in-out infinite',
-          },
-          '@keyframes shimmer': {
-            '0%, 100%': { opacity: 0.5 },
-            '50%': { opacity: 1 },
-          },
-        }}
-      >
-        <Typography variant="h2" component="h1" gutterBottom fontWeight={800} sx={{ position: 'relative', zIndex: 1, letterSpacing: '-0.02em' }}>
-          Welcome to ClubHub
-        </Typography>
-        <Typography variant="h5" sx={{ mb: 4, opacity: 0.95, position: 'relative', zIndex: 1, fontWeight: 500 }}>
-          Connect, Learn, and Grow Together
-        </Typography>
-        <Typography variant="body1" sx={{ mb: 4, maxWidth: 700, mx: 'auto', opacity: 0.9, position: 'relative', zIndex: 1, fontSize: '1.1rem', lineHeight: 1.7 }}>
-          Join our vibrant community of students dedicated to learning, networking, and making a difference.
-          Explore events, meet our amazing board members, and become part of something special.
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap', position: 'relative', zIndex: 1 }}>
-          <Button
-            variant="contained"
-            size="large"
-            component={RouterLink}
-            to="/board"
-            sx={{
-              bgcolor: 'white',
-              color: 'primary.main',
-              px: 4,
-              py: 1.5,
-              fontSize: '1.1rem',
-              fontWeight: 700,
-              boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-              '&:hover': {
-                bgcolor: 'grey.50',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 12px 32px rgba(0,0,0,0.2)',
-              },
-            }}
-          >
-            Meet the Board
-          </Button>
-          <Button
-            variant="outlined"
-            size="large"
-            component={RouterLink}
-            to="/events"
-            sx={{
-              color: 'white',
-              borderColor: 'white',
-              borderWidth: 2,
-              px: 4,
-              py: 1.5,
-              fontSize: '1.1rem',
-              fontWeight: 700,
-              '&:hover': {
-                borderColor: 'white',
-                bgcolor: 'rgba(255,255,255,0.15)',
-                transform: 'translateY(-2px)',
-                borderWidth: 2,
-              },
-            }}
-          >
-            View All Events
-          </Button>
-        </Box>
-      </Box>
+      <HeroSection
+        title="Welcome to ClubHub"
+        subtitle="Connect, Learn, and Grow Together"
+        description="Join our vibrant community of students dedicated to learning, networking, and making a difference. Explore events, meet our amazing board members, and become part of something special."
+        primaryButton={{ label: 'Meet the Board', to: '/board' }}
+        secondaryButton={{ label: 'View All Events', to: '/events' }}
+      />
 
       {/* Stats Section */}
       <Grid container spacing={4} sx={{ mb: 6 }}>
@@ -157,10 +78,10 @@ function HomePage() {
             }}
           >
             <EventIcon sx={{ fontSize: 56, mb: 1, position: 'relative', zIndex: 1, filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.2))' }} />
-            <Typography variant="h3" fontWeight={800} sx={{ position: 'relative', zIndex: 1 }}>
+            <Typography variant="h3" component="p" fontWeight={800} sx={{ position: 'relative', zIndex: 1 }}>
               {stats.upcoming_events}
             </Typography>
-            <Typography variant="h6" fontWeight={600} sx={{ position: 'relative', zIndex: 1 }}>Upcoming Events</Typography>
+            <Typography variant="h6" component="p" fontWeight={600} sx={{ position: 'relative', zIndex: 1 }}>Upcoming Events</Typography>
           </Card>
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -190,17 +111,17 @@ function HomePage() {
             }}
           >
             <GroupIcon sx={{ fontSize: 56, mb: 1, position: 'relative', zIndex: 1, filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.2))' }} />
-            <Typography variant="h3" fontWeight={800} sx={{ position: 'relative', zIndex: 1 }}>
+            <Typography variant="h3" component="p" fontWeight={800} sx={{ position: 'relative', zIndex: 1 }}>
               8
             </Typography>
-            <Typography variant="h6" fontWeight={600} sx={{ position: 'relative', zIndex: 1 }}>Board Members</Typography>
+            <Typography variant="h6" component="p" fontWeight={600} sx={{ position: 'relative', zIndex: 1 }}>Board Members</Typography>
           </Card>
         </Grid>
       </Grid>
 
       {/* Club Mission Section */}
       <Box sx={{ mb: 6, textAlign: 'center' }}>
-        <Typography variant="h4" gutterBottom fontWeight={700}>
+        <Typography variant="h4" component="h2" gutterBottom fontWeight={700}>
           Our Mission
         </Typography>
         <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 800, mx: 'auto', mb: 3 }}>
@@ -212,7 +133,7 @@ function HomePage() {
 
       {/* Upcoming Events Preview */}
       <Box sx={{ mb: 6 }}>
-        <Typography variant="h4" gutterBottom fontWeight={700} sx={{ mb: 3 }}>
+        <Typography variant="h4" component="h2" gutterBottom fontWeight={700} sx={{ mb: 3 }}>
           Upcoming Events
         </Typography>
         {upcomingEvents.length === 0 ? (
@@ -252,7 +173,7 @@ function HomePage() {
           },
         }}
       >
-        <Typography variant="h4" gutterBottom fontWeight={800} sx={{ position: 'relative', zIndex: 1 }}>
+        <Typography variant="h4" component="h2" gutterBottom fontWeight={800} sx={{ position: 'relative', zIndex: 1 }}>
           Ready to Get Involved?
         </Typography>
         <Typography variant="body1" sx={{ mb: 3, maxWidth: 600, mx: 'auto', fontSize: '1.1rem', opacity: 0.95, position: 'relative', zIndex: 1 }}>
