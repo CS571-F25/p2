@@ -6,10 +6,11 @@ import {
   Box,
   Typography,
   Chip,
+  CardActionArea,
 } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 
-function EventCard({ event }) {
+function EventCard({ event, onClick }) {
   const getEventTypeColor = (type) => {
     const colorMap = {
       workshop: 'primary',
@@ -43,6 +44,7 @@ function EventCard({ event }) {
         border: '1px solid rgba(255, 255, 255, 0.3)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
         overflow: 'hidden',
+        cursor: 'pointer',
         '&:hover': {
           boxShadow: '0 20px 40px rgba(99, 102, 241, 0.2)',
           transform: 'translateY(-8px) scale(1.02)',
@@ -50,6 +52,10 @@ function EventCard({ event }) {
         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
+      <CardActionArea
+        onClick={onClick}
+        sx={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}
+      >
       {event.image ? (
         <CardMedia
           component="img"
@@ -137,6 +143,7 @@ function EventCard({ event }) {
           </Box>
         )}
       </CardContent>
+      </CardActionArea>
     </Card>
   );
 }

@@ -13,6 +13,7 @@ import {
 import EventIcon from '@mui/icons-material/Event';
 import GroupIcon from '@mui/icons-material/Group';
 import EventCard from '../components/EventCard';
+import EventModal from '../components/EventModal';
 import HeroSection from '../components/HeroSection';
 import { mockEventStats, getUpcomingEvents } from '../data/mockData';
 
@@ -20,6 +21,18 @@ function HomePage() {
   const [stats, setStats] = useState({ total_events: 0, upcoming_events: 0 });
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const handleEventClick = (event) => {
+    setSelectedEvent(event);
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setTimeout(() => setSelectedEvent(null), 300); // Clear after transition
+  };
 
   useEffect(() => {
     // Simulate loading delay for realistic feel
@@ -142,7 +155,7 @@ function HomePage() {
           <Grid container spacing={3}>
             {upcomingEvents.map((event) => (
               <Grid item xs={12} sm={6} md={4} key={event.id}>
-                <EventCard event={event} />
+                <EventCard event={event} onClick={() => handleEventClick(event)} />
               </Grid>
             ))}
           </Grid>
@@ -204,6 +217,9 @@ function HomePage() {
           Meet Our Team
         </Button>
       </Box>
+
+      {/* Event Details Modal */}
+      <EventModal event={selectedEvent} open={modalOpen} onClose={handleModalClose} />
     </Container>
   );
 }

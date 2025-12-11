@@ -8,6 +8,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import EventCard from '../components/EventCard';
+import EventModal from '../components/EventModal';
 import SectionHeader from '../components/SectionHeader';
 import SearchBar from '../components/SearchBar';
 import FilterDropdown from '../components/FilterDropdown';
@@ -19,6 +20,18 @@ function EventsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const handleEventClick = (event) => {
+    setSelectedEvent(event);
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setTimeout(() => setSelectedEvent(null), 300); // Clear after transition
+  };
 
   useEffect(() => {
     // Simulate loading delay for realistic feel
@@ -121,11 +134,14 @@ function EventsPage() {
         <Grid container spacing={3}>
           {filteredEvents.map((event) => (
             <Grid item xs={12} sm={6} md={4} key={event.id}>
-              <EventCard event={event} />
+              <EventCard event={event} onClick={() => handleEventClick(event)} />
             </Grid>
           ))}
         </Grid>
       )}
+
+      {/* Event Details Modal */}
+      <EventModal event={selectedEvent} open={modalOpen} onClose={handleModalClose} />
     </Container>
   );
 }
