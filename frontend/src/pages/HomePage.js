@@ -13,6 +13,7 @@ import {
 import EventIcon from '@mui/icons-material/Event';
 import GroupIcon from '@mui/icons-material/Group';
 import EventCard from '../components/EventCard';
+import EventModal from '../components/EventModal';
 import HeroSection from '../components/HeroSection';
 import { mockEventStats, getUpcomingEvents } from '../data/mockData';
 
@@ -28,6 +29,8 @@ function HomePage() {
     const saved = localStorage.getItem('eventRsvps');
     return saved ? JSON.parse(saved) : [];
   });
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('eventBookmarks', JSON.stringify(bookmarks));
@@ -52,6 +55,16 @@ function HomePage() {
         : [...prev, eventId]
     );
   }, []);
+
+  const handleEventClick = (event) => {
+    setSelectedEvent(event);
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setTimeout(() => setSelectedEvent(null), 300);
+  };
 
   useEffect(() => {
     // Simulate loading delay for realistic feel
@@ -176,6 +189,7 @@ function HomePage() {
               <Grid item xs={12} sm={6} md={4} key={event.id}>
                 <EventCard
                   event={event}
+                  onClick={() => handleEventClick(event)}
                   isBookmarked={bookmarks.includes(event.id)}
                   isRsvped={rsvps.includes(event.id)}
                   onBookmark={handleBookmark}
@@ -242,6 +256,9 @@ function HomePage() {
           Meet Our Team
         </Button>
       </Box>
+
+      {/* Event Details Modal */}
+      <EventModal event={selectedEvent} open={modalOpen} onClose={handleModalClose} />
     </Container>
   );
 }

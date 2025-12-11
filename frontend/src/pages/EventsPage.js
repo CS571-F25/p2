@@ -12,6 +12,7 @@ import {
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import EventIcon from '@mui/icons-material/Event';
 import EventCard from '../components/EventCard';
+import EventModal from '../components/EventModal';
 import SectionHeader from '../components/SectionHeader';
 import SearchBar from '../components/SearchBar';
 import FilterDropdown from '../components/FilterDropdown';
@@ -32,6 +33,8 @@ function EventsPage() {
     const saved = localStorage.getItem('eventRsvps');
     return saved ? JSON.parse(saved) : [];
   });
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('eventBookmarks', JSON.stringify(bookmarks));
@@ -56,6 +59,16 @@ function EventsPage() {
         : [...prev, eventId]
     );
   }, []);
+
+  const handleEventClick = (event) => {
+    setSelectedEvent(event);
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setTimeout(() => setSelectedEvent(null), 300);
+  };
 
   useEffect(() => {
     // Simulate loading delay for realistic feel
@@ -196,6 +209,7 @@ function EventsPage() {
             <Grid item xs={12} sm={6} md={4} key={event.id}>
               <EventCard
                 event={event}
+                onClick={() => handleEventClick(event)}
                 isBookmarked={bookmarks.includes(event.id)}
                 isRsvped={rsvps.includes(event.id)}
                 onBookmark={handleBookmark}
@@ -205,6 +219,9 @@ function EventsPage() {
           ))}
         </Grid>
       )}
+
+      {/* Event Details Modal */}
+      <EventModal event={selectedEvent} open={modalOpen} onClose={handleModalClose} />
     </Container>
   );
 }
