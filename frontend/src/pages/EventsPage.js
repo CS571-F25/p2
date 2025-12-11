@@ -105,7 +105,7 @@ function EventsPage() {
 
       {/* Results count */}
       {(searchQuery || typeFilter !== 'all') && (
-        <Box sx={{ mb: 3 }}>
+        <Box sx={{ mb: 3 }} role="status" aria-live="polite" aria-atomic="true">
           <Typography variant="body2" color="text.secondary">
             Showing {filteredEvents.length} of {events.length} events
           </Typography>

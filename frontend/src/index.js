@@ -100,6 +100,23 @@ const theme = createTheme({
     '0 25px 50px -12px rgb(0 0 0 / 0.25)',
   ],
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        // Enhanced focus indicators for keyboard navigation
+        '*:focus-visible': {
+          outline: '3px solid #ec4899',
+          outlineOffset: '2px',
+          borderRadius: '4px',
+        },
+        // Ensure sufficient color contrast for links
+        a: {
+          '&:focus-visible': {
+            outline: '3px solid #ec4899',
+            outlineOffset: '2px',
+          },
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
@@ -111,6 +128,10 @@ const theme = createTheme({
             transform: 'translateY(-2px)',
             transition: 'all 0.3s ease',
           },
+          '&:focus-visible': {
+            outline: '3px solid #ec4899',
+            outlineOffset: '2px',
+          },
         },
       },
     },
@@ -119,6 +140,32 @@ const theme = createTheme({
         root: {
           borderRadius: 20,
           transition: 'all 0.3s ease',
+          '&:focus-within': {
+            boxShadow: '0 0 0 3px rgba(236, 72, 153, 0.3)',
+          },
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          '&:focus-visible': {
+            outline: '3px solid #ec4899',
+            outlineOffset: '2px',
+          },
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            '&.Mui-focused': {
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderWidth: '2px',
+              },
+            },
+          },
         },
       },
     },

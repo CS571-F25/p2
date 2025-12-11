@@ -107,7 +107,7 @@ function BoardPage() {
 
       {/* Results count */}
       {(searchQuery || roleFilter !== 'all') && (
-        <Box sx={{ mb: 3 }}>
+        <Box sx={{ mb: 3 }} role="status" aria-live="polite" aria-atomic="true">
           <Typography variant="body2" color="text.secondary">
             Showing {filteredMembers.length} of {members.length} members
           </Typography>

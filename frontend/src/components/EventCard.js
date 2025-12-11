@@ -98,11 +98,11 @@ function EventCard({ event }) {
             boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
           }}
         />
-        <Typography variant="h6" gutterBottom fontWeight={700} sx={{ mb: 1.5 }}>
+        <Typography variant="h6" component="h2" gutterBottom fontWeight={700} sx={{ mb: 1.5 }}>
           {event.title}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          📅 {new Date(event.date).toLocaleDateString('en-US', {
+          <span role="img" aria-label="Date">📅</span> {new Date(event.date).toLocaleDateString('en-US', {
             weekday: 'short',
             year: 'numeric',
             month: 'short',
@@ -110,7 +110,7 @@ function EventCard({ event }) {
           })}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          📍 {event.location}
+          <span role="img" aria-label="Location">📍</span> {event.location}
         </Typography>
         {event.attendee_count !== undefined && (
           <Box
@@ -131,7 +131,7 @@ function EventCard({ event }) {
                 gap: 0.5,
               }}
             >
-              👥 {event.attendee_count} attending
+              <span role="img" aria-label="Attendees">👥</span> {event.attendee_count} attending
               {event.max_attendees && ` / ${event.max_attendees} max`}
             </Typography>
           </Box>

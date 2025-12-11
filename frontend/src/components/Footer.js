@@ -47,7 +47,9 @@ function Footer() {
             <IconButton
               href="https://github.com"
               target="_blank"
-              aria-label="GitHub"
+              rel="noopener noreferrer"
+              aria-label="Visit ClubHub on GitHub"
+              title="Visit ClubHub on GitHub"
               sx={{
                 color: 'white',
                 bgcolor: 'rgba(255, 255, 255, 0.1)',
@@ -64,7 +66,9 @@ function Footer() {
             <IconButton
               href="https://twitter.com"
               target="_blank"
-              aria-label="Twitter"
+              rel="noopener noreferrer"
+              aria-label="Follow ClubHub on Twitter"
+              title="Follow ClubHub on Twitter"
               sx={{
                 color: 'white',
                 bgcolor: 'rgba(255, 255, 255, 0.1)',
@@ -81,7 +85,9 @@ function Footer() {
             <IconButton
               href="https://linkedin.com"
               target="_blank"
-              aria-label="LinkedIn"
+              rel="noopener noreferrer"
+              aria-label="Connect with ClubHub on LinkedIn"
+              title="Connect with ClubHub on LinkedIn"
               sx={{
                 color: 'white',
                 bgcolor: 'rgba(255, 255, 255, 0.1)',

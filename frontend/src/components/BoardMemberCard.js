@@ -94,6 +94,8 @@ function BoardMemberCard({ member }) {
         >
           <Typography
             variant="h1"
+            component="div"
+            aria-hidden="true"
             sx={{
               color: 'white',
               fontWeight: 800,
@@ -107,7 +109,7 @@ function BoardMemberCard({ member }) {
         </Box>
       )}
       <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 3 }}>
-        <Typography variant="h6" gutterBottom fontWeight={700} sx={{ mb: 1 }}>
+        <Typography variant="h6" component="h2" gutterBottom fontWeight={700} sx={{ mb: 1 }}>
           {member.name}
         </Typography>
         <Chip
@@ -146,7 +148,8 @@ function BoardMemberCard({ member }) {
             <IconButton
               size="small"
               href={`mailto:${member.email}`}
-              aria-label="Email"
+              aria-label={`Email ${member.name}`}
+              title={`Email ${member.name}`}
               sx={{
                 color: 'primary.main',
                 bgcolor: 'primary.lighter',
@@ -167,7 +170,8 @@ function BoardMemberCard({ member }) {
               href={member.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="LinkedIn"
+              aria-label={`${member.name}'s LinkedIn profile`}
+              title={`${member.name}'s LinkedIn profile`}
               sx={{
                 color: 'info.main',
                 bgcolor: 'info.lighter',
@@ -188,7 +192,8 @@ function BoardMemberCard({ member }) {
               href={member.github}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="GitHub"
+              aria-label={`${member.name}'s GitHub profile`}
+              title={`${member.name}'s GitHub profile`}
               sx={{
                 color: 'text.primary',
                 bgcolor: 'grey.200',
@@ -209,7 +214,8 @@ function BoardMemberCard({ member }) {
               href={member.twitter}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Twitter"
+              aria-label={`${member.name}'s Twitter profile`}
+              title={`${member.name}'s Twitter profile`}
               sx={{
                 color: 'secondary.main',
                 bgcolor: 'secondary.lighter',
