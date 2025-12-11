@@ -3,13 +3,21 @@ import {
   Card,
   CardContent,
   CardMedia,
+  CardActions,
   Box,
   Typography,
   Chip,
+  IconButton,
+  Button,
+  Tooltip,
 } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-function EventCard({ event }) {
+function EventCard({ event, isBookmarked, isRsvped, onBookmark, onRsvp }) {
   const getEventTypeColor = (type) => {
     const colorMap = {
       workshop: 'primary',
@@ -131,12 +139,44 @@ function EventCard({ event }) {
                 gap: 0.5,
               }}
             >
-              <span role="img" aria-label="Attendees">👥</span> {event.attendee_count} attending
+              <span role="img" aria-label="Attendees">👥</span> {event.attendee_count + (isRsvped ? 1 : 0)} attending
               {event.max_attendees && ` / ${event.max_attendees} max`}
             </Typography>
           </Box>
         )}
       </CardContent>
+      <CardActions sx={{ px: 3, pb: 2, pt: 0, justifyContent: 'space-between' }}>
+        <Button
+          variant={isRsvped ? 'contained' : 'outlined'}
+          color={isRsvped ? 'success' : 'primary'}
+          size="small"
+          startIcon={isRsvped ? <CheckCircleIcon /> : <CheckCircleOutlineIcon />}
+          onClick={() => onRsvp(event.id)}
+          aria-pressed={isRsvped}
+          sx={{
+            fontWeight: 600,
+            transition: 'all 0.2s ease',
+          }}
+        >
+          {isRsvped ? 'RSVPed' : 'RSVP'}
+        </Button>
+        <Tooltip title={isBookmarked ? 'Remove bookmark' : 'Bookmark event'}>
+          <IconButton
+            onClick={() => onBookmark(event.id)}
+            color={isBookmarked ? 'primary' : 'default'}
+            aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark event'}
+            aria-pressed={isBookmarked}
+            sx={{
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                transform: 'scale(1.1)',
+              },
+            }}
+          >
+            {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+          </IconButton>
+        </Tooltip>
+      </CardActions>
     </Card>
   );
 }

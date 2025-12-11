@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
   Container,
@@ -20,6 +20,38 @@ function HomePage() {
   const [stats, setStats] = useState({ total_events: 0, upcoming_events: 0 });
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [bookmarks, setBookmarks] = useState(() => {
+    const saved = localStorage.getItem('eventBookmarks');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [rsvps, setRsvps] = useState(() => {
+    const saved = localStorage.getItem('eventRsvps');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('eventBookmarks', JSON.stringify(bookmarks));
+  }, [bookmarks]);
+
+  useEffect(() => {
+    localStorage.setItem('eventRsvps', JSON.stringify(rsvps));
+  }, [rsvps]);
+
+  const handleBookmark = useCallback((eventId) => {
+    setBookmarks((prev) =>
+      prev.includes(eventId)
+        ? prev.filter((id) => id !== eventId)
+        : [...prev, eventId]
+    );
+  }, []);
+
+  const handleRsvp = useCallback((eventId) => {
+    setRsvps((prev) =>
+      prev.includes(eventId)
+        ? prev.filter((id) => id !== eventId)
+        : [...prev, eventId]
+    );
+  }, []);
 
   useEffect(() => {
     // Simulate loading delay for realistic feel
@@ -142,7 +174,13 @@ function HomePage() {
           <Grid container spacing={3}>
             {upcomingEvents.map((event) => (
               <Grid item xs={12} sm={6} md={4} key={event.id}>
-                <EventCard event={event} />
+                <EventCard
+                  event={event}
+                  isBookmarked={bookmarks.includes(event.id)}
+                  isRsvped={rsvps.includes(event.id)}
+                  onBookmark={handleBookmark}
+                  onRsvp={handleRsvp}
+                />
               </Grid>
             ))}
           </Grid>
