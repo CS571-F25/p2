@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
   Container,
@@ -21,8 +21,40 @@ function HomePage() {
   const [stats, setStats] = useState({ total_events: 0, upcoming_events: 0 });
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [bookmarks, setBookmarks] = useState(() => {
+    const saved = localStorage.getItem('eventBookmarks');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [rsvps, setRsvps] = useState(() => {
+    const saved = localStorage.getItem('eventRsvps');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('eventBookmarks', JSON.stringify(bookmarks));
+  }, [bookmarks]);
+
+  useEffect(() => {
+    localStorage.setItem('eventRsvps', JSON.stringify(rsvps));
+  }, [rsvps]);
+
+  const handleBookmark = useCallback((eventId) => {
+    setBookmarks((prev) =>
+      prev.includes(eventId)
+        ? prev.filter((id) => id !== eventId)
+        : [...prev, eventId]
+    );
+  }, []);
+
+  const handleRsvp = useCallback((eventId) => {
+    setRsvps((prev) =>
+      prev.includes(eventId)
+        ? prev.filter((id) => id !== eventId)
+        : [...prev, eventId]
+    );
+  }, []);
 
   const handleEventClick = (event) => {
     setSelectedEvent(event);
@@ -31,7 +63,7 @@ function HomePage() {
 
   const handleModalClose = () => {
     setModalOpen(false);
-    setTimeout(() => setSelectedEvent(null), 300); // Clear after transition
+    setTimeout(() => setSelectedEvent(null), 300);
   };
 
   useEffect(() => {
@@ -155,7 +187,14 @@ function HomePage() {
           <Grid container spacing={3}>
             {upcomingEvents.map((event) => (
               <Grid item xs={12} sm={6} md={4} key={event.id}>
-                <EventCard event={event} onClick={() => handleEventClick(event)} />
+                <EventCard
+                  event={event}
+                  onClick={() => handleEventClick(event)}
+                  isBookmarked={bookmarks.includes(event.id)}
+                  isRsvped={rsvps.includes(event.id)}
+                  onBookmark={handleBookmark}
+                  onRsvp={handleRsvp}
+                />
               </Grid>
             ))}
           </Grid>
@@ -219,7 +258,13 @@ function HomePage() {
       </Box>
 
       {/* Event Details Modal */}
-      <EventModal event={selectedEvent} open={modalOpen} onClose={handleModalClose} />
+      <EventModal
+        event={selectedEvent}
+        open={modalOpen}
+        onClose={handleModalClose}
+        isRsvped={selectedEvent ? rsvps.includes(selectedEvent.id) : false}
+        onRsvp={handleRsvp}
+      />
     </Container>
   );
 }

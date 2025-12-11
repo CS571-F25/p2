@@ -3,14 +3,22 @@ import {
   Card,
   CardContent,
   CardMedia,
+  CardActions,
   Box,
   Typography,
   Chip,
+  IconButton,
+  Button,
+  Tooltip,
   CardActionArea,
 } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-function EventCard({ event, onClick }) {
+function EventCard({ event, onClick, isBookmarked, isRsvped, onBookmark, onRsvp }) {
   const getEventTypeColor = (type) => {
     const colorMap = {
       workshop: 'primary',
@@ -44,7 +52,6 @@ function EventCard({ event, onClick }) {
         border: '1px solid rgba(255, 255, 255, 0.3)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
         overflow: 'hidden',
-        cursor: 'pointer',
         '&:hover': {
           boxShadow: '0 20px 40px rgba(99, 102, 241, 0.2)',
           transform: 'translateY(-8px) scale(1.02)',
@@ -54,96 +61,134 @@ function EventCard({ event, onClick }) {
     >
       <CardActionArea
         onClick={onClick}
-        sx={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}
+        sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}
       >
-      {event.image ? (
-        <CardMedia
-          component="img"
-          height="180"
-          image={event.image}
-          alt={event.title}
-          sx={{
-            objectFit: 'cover',
-          }}
-        />
-      ) : (
-        <Box
-          sx={{
-            height: 180,
-            background: `linear-gradient(135deg, ${getEventGradient(event.event_type)})`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            position: 'relative',
-            overflow: 'hidden',
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              width: '200%',
-              height: '200%',
-              background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%)',
-              animation: 'pulse 3s ease-in-out infinite',
-            },
-            '@keyframes pulse': {
-              '0%, 100%': { transform: 'scale(1)', opacity: 0.5 },
-              '50%': { transform: 'scale(1.1)', opacity: 0.8 },
-            },
-          }}
-        >
-          <EventIcon sx={{ fontSize: 70, color: 'white', opacity: 0.9, zIndex: 1, filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.2))' }} />
-        </Box>
-      )}
-      <CardContent sx={{ flexGrow: 1, p: 3 }}>
-        <Chip
-          label={event.event_type_display || event.event_type}
-          size="small"
-          color={getEventTypeColor(event.event_type)}
-          sx={{
-            mb: 1.5,
-            fontWeight: 600,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-          }}
-        />
-        <Typography variant="h6" component="h2" gutterBottom fontWeight={700} sx={{ mb: 1.5 }}>
-          {event.title}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <span role="img" aria-label="Date">📅</span> {new Date(event.date).toLocaleDateString('en-US', {
-            weekday: 'short',
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          })}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <span role="img" aria-label="Location">📍</span> {event.location}
-        </Typography>
-        {event.attendee_count !== undefined && (
+        {event.image ? (
+          <CardMedia
+            component="img"
+            height="180"
+            image={event.image}
+            alt={event.title}
+            sx={{
+              objectFit: 'cover',
+            }}
+          />
+        ) : (
           <Box
             sx={{
-              mt: 'auto',
-              pt: 2,
-              borderTop: '1px solid',
-              borderColor: 'divider',
+              height: 180,
+              background: `linear-gradient(135deg, ${getEventGradient(event.event_type)})`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                width: '200%',
+                height: '200%',
+                background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%)',
+                animation: 'pulse 3s ease-in-out infinite',
+              },
+              '@keyframes pulse': {
+                '0%, 100%': { transform: 'scale(1)', opacity: 0.5 },
+                '50%': { transform: 'scale(1.1)', opacity: 0.8 },
+              },
             }}
           >
-            <Typography
-              variant="body2"
-              sx={{
-                color: 'primary.main',
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 0.5,
-              }}
-            >
-              <span role="img" aria-label="Attendees">👥</span> {event.attendee_count} attending
-              {event.max_attendees && ` / ${event.max_attendees} max`}
-            </Typography>
+            <EventIcon sx={{ fontSize: 70, color: 'white', opacity: 0.9, zIndex: 1, filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.2))' }} />
           </Box>
         )}
-      </CardContent>
+        <CardContent sx={{ flexGrow: 1, p: 3 }}>
+          <Chip
+            label={event.event_type_display || event.event_type}
+            size="small"
+            color={getEventTypeColor(event.event_type)}
+            sx={{
+              mb: 1.5,
+              fontWeight: 600,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            }}
+          />
+          <Typography variant="h6" component="h2" gutterBottom fontWeight={700} sx={{ mb: 1.5 }}>
+            {event.title}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <span role="img" aria-label="Date">📅</span> {new Date(event.date).toLocaleDateString('en-US', {
+              weekday: 'short',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            })}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <span role="img" aria-label="Location">📍</span> {event.location}
+          </Typography>
+          {event.attendee_count !== undefined && (
+            <Box
+              sx={{
+                mt: 'auto',
+                pt: 2,
+                borderTop: '1px solid',
+                borderColor: 'divider',
+              }}
+            >
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'primary.main',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 0.5,
+                }}
+              >
+                <span role="img" aria-label="Attendees">👥</span> {event.attendee_count + (isRsvped ? 1 : 0)} attending
+                {event.max_attendees && ` / ${event.max_attendees} max`}
+              </Typography>
+            </Box>
+          )}
+        </CardContent>
       </CardActionArea>
+      <CardActions sx={{ px: 3, pb: 2, pt: 0, justifyContent: 'space-between' }}>
+        <Button
+          variant={isRsvped ? 'contained' : 'outlined'}
+          color={isRsvped ? 'success' : 'primary'}
+          size="small"
+          startIcon={isRsvped ? <CheckCircleIcon /> : <CheckCircleOutlineIcon />}
+          onClick={(e) => {
+            e.stopPropagation();
+            onRsvp(event.id);
+          }}
+          aria-pressed={isRsvped}
+          sx={{
+            fontWeight: 600,
+            transition: 'all 0.2s ease',
+          }}
+        >
+          {isRsvped ? 'RSVPed' : 'RSVP'}
+        </Button>
+        <Tooltip title={isBookmarked ? 'Remove bookmark' : 'Bookmark event'}>
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              onBookmark(event.id);
+            }}
+            color={isBookmarked ? 'primary' : 'default'}
+            aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark event'}
+            aria-pressed={isBookmarked}
+            sx={{
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                transform: 'scale(1.1)',
+              },
+            }}
+          >
+            {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+          </IconButton>
+        </Tooltip>
+      </CardActions>
     </Card>
   );
 }

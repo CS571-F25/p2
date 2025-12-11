@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Box,
@@ -6,7 +6,11 @@ import {
   Grid,
   Alert,
   CircularProgress,
+  ToggleButton,
+  ToggleButtonGroup,
 } from '@mui/material';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import EventIcon from '@mui/icons-material/Event';
 import EventCard from '../components/EventCard';
 import EventModal from '../components/EventModal';
 import SectionHeader from '../components/SectionHeader';
@@ -19,9 +23,42 @@ function EventsPage() {
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
+  const [viewFilter, setViewFilter] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [bookmarks, setBookmarks] = useState(() => {
+    const saved = localStorage.getItem('eventBookmarks');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [rsvps, setRsvps] = useState(() => {
+    const saved = localStorage.getItem('eventRsvps');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('eventBookmarks', JSON.stringify(bookmarks));
+  }, [bookmarks]);
+
+  useEffect(() => {
+    localStorage.setItem('eventRsvps', JSON.stringify(rsvps));
+  }, [rsvps]);
+
+  const handleBookmark = useCallback((eventId) => {
+    setBookmarks((prev) =>
+      prev.includes(eventId)
+        ? prev.filter((id) => id !== eventId)
+        : [...prev, eventId]
+    );
+  }, []);
+
+  const handleRsvp = useCallback((eventId) => {
+    setRsvps((prev) =>
+      prev.includes(eventId)
+        ? prev.filter((id) => id !== eventId)
+        : [...prev, eventId]
+    );
+  }, []);
 
   const handleEventClick = (event) => {
     setSelectedEvent(event);
@@ -30,7 +67,7 @@ function EventsPage() {
 
   const handleModalClose = () => {
     setModalOpen(false);
-    setTimeout(() => setSelectedEvent(null), 300); // Clear after transition
+    setTimeout(() => setSelectedEvent(null), 300);
   };
 
   useEffect(() => {
@@ -45,7 +82,14 @@ function EventsPage() {
   useEffect(() => {
     let filtered = events;
 
-    // Apply type filter first
+    // Apply view filter (all/bookmarked/rsvped)
+    if (viewFilter === 'bookmarked') {
+      filtered = filtered.filter((event) => bookmarks.includes(event.id));
+    } else if (viewFilter === 'rsvped') {
+      filtered = filtered.filter((event) => rsvps.includes(event.id));
+    }
+
+    // Apply type filter
     if (typeFilter !== 'all') {
       filtered = filtered.filter((event) => event.event_type === typeFilter);
     }
@@ -62,7 +106,7 @@ function EventsPage() {
     }
 
     setFilteredEvents(filtered);
-  }, [searchQuery, typeFilter, events]);
+  }, [searchQuery, typeFilter, viewFilter, events, bookmarks, rsvps]);
 
   if (loading) {
     return (
@@ -114,13 +158,42 @@ function EventsPage() {
             { value: 'other', label: 'Other' },
           ]}
         />
+        <ToggleButtonGroup
+          value={viewFilter}
+          exclusive
+          onChange={(e, newValue) => newValue && setViewFilter(newValue)}
+          aria-label="Filter events by status"
+          size="small"
+          sx={{
+            ml: 'auto',
+            '& .MuiToggleButton-root': {
+              px: 2,
+              py: 1,
+              fontWeight: 600,
+            },
+          }}
+        >
+          <ToggleButton value="all" aria-label="Show all events">
+            <EventIcon sx={{ mr: 1 }} />
+            All
+          </ToggleButton>
+          <ToggleButton value="bookmarked" aria-label="Show bookmarked events">
+            <BookmarkIcon sx={{ mr: 1 }} />
+            Bookmarked ({bookmarks.length})
+          </ToggleButton>
+          <ToggleButton value="rsvped" aria-label="Show RSVPed events">
+            RSVPed ({rsvps.length})
+          </ToggleButton>
+        </ToggleButtonGroup>
       </Box>
 
       {/* Results count */}
-      {(searchQuery || typeFilter !== 'all') && (
+      {(searchQuery || typeFilter !== 'all' || viewFilter !== 'all') && (
         <Box sx={{ mb: 3 }} role="status" aria-live="polite" aria-atomic="true">
           <Typography variant="body2" color="text.secondary">
             Showing {filteredEvents.length} of {events.length} events
+            {viewFilter === 'bookmarked' && ' (Bookmarked)'}
+            {viewFilter === 'rsvped' && ' (RSVPed)'}
           </Typography>
         </Box>
       )}
@@ -134,14 +207,27 @@ function EventsPage() {
         <Grid container spacing={3}>
           {filteredEvents.map((event) => (
             <Grid item xs={12} sm={6} md={4} key={event.id}>
-              <EventCard event={event} onClick={() => handleEventClick(event)} />
+              <EventCard
+                event={event}
+                onClick={() => handleEventClick(event)}
+                isBookmarked={bookmarks.includes(event.id)}
+                isRsvped={rsvps.includes(event.id)}
+                onBookmark={handleBookmark}
+                onRsvp={handleRsvp}
+              />
             </Grid>
           ))}
         </Grid>
       )}
 
       {/* Event Details Modal */}
-      <EventModal event={selectedEvent} open={modalOpen} onClose={handleModalClose} />
+      <EventModal
+        event={selectedEvent}
+        open={modalOpen}
+        onClose={handleModalClose}
+        isRsvped={selectedEvent ? rsvps.includes(selectedEvent.id) : false}
+        onRsvp={handleRsvp}
+      />
     </Container>
   );
 }
