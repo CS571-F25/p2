@@ -258,7 +258,13 @@ function HomePage() {
       </Box>
 
       {/* Event Details Modal */}
-      <EventModal event={selectedEvent} open={modalOpen} onClose={handleModalClose} />
+      <EventModal
+        event={selectedEvent}
+        open={modalOpen}
+        onClose={handleModalClose}
+        isRsvped={selectedEvent ? rsvps.includes(selectedEvent.id) : false}
+        onRsvp={handleRsvp}
+      />
     </Container>
   );
 }

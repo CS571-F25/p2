@@ -16,8 +16,10 @@ import EventIcon from '@mui/icons-material/Event';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PeopleIcon from '@mui/icons-material/People';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
-function EventModal({ event, open, onClose }) {
+function EventModal({ event, open, onClose, isRsvped, onRsvp }) {
   if (!event) return null;
 
   const getEventTypeColor = (type) => {
@@ -204,20 +206,20 @@ function EventModal({ event, open, onClose }) {
           <Typography variant="body1" color="text.primary" sx={{ ml: 4 }}>
             {event.attendee_count !== undefined && (
               <>
-                <strong>{event.attendee_count}</strong> people are attending
+                <strong>{event.attendee_count + (isRsvped ? 1 : 0)}</strong> people are attending
                 {event.max_attendees && (
                   <>
                     {' '}
                     <span role="img" aria-label="separator">
                       •
                     </span>{' '}
-                    <strong>{event.max_attendees - event.attendee_count}</strong> spots
+                    <strong>{event.max_attendees - event.attendee_count - (isRsvped ? 1 : 0)}</strong> spots
                     remaining
                   </>
                 )}
               </>
             )}
-            {event.max_attendees && event.attendee_count >= event.max_attendees && (
+            {event.max_attendees && event.attendee_count >= event.max_attendees && !isRsvped && (
               <Chip
                 label="Event Full"
                 color="error"
@@ -243,21 +245,32 @@ function EventModal({ event, open, onClose }) {
         </Button>
         <Button
           variant="contained"
+          onClick={() => onRsvp(event.id)}
+          startIcon={isRsvped ? <CheckCircleIcon /> : <CheckCircleOutlineIcon />}
+          aria-pressed={isRsvped}
           sx={{
             borderRadius: 2,
             px: 4,
             fontWeight: 700,
-            background: `linear-gradient(135deg, ${getEventGradient(event.event_type)})`,
-            boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
+            background: isRsvped
+              ? 'linear-gradient(135deg, #10b981 0%, #34d399 100%)'
+              : `linear-gradient(135deg, ${getEventGradient(event.event_type)})`,
+            boxShadow: isRsvped
+              ? '0 4px 12px rgba(16, 185, 129, 0.3)'
+              : '0 4px 12px rgba(99, 102, 241, 0.3)',
             '&:hover': {
-              boxShadow: '0 6px 20px rgba(99, 102, 241, 0.4)',
+              boxShadow: isRsvped
+                ? '0 6px 20px rgba(16, 185, 129, 0.4)'
+                : '0 6px 20px rgba(99, 102, 241, 0.4)',
               transform: 'translateY(-2px)',
             },
           }}
-          disabled={event.max_attendees && event.attendee_count >= event.max_attendees}
+          disabled={!isRsvped && event.max_attendees && event.attendee_count >= event.max_attendees}
         >
-          {event.max_attendees && event.attendee_count >= event.max_attendees
+          {event.max_attendees && event.attendee_count >= event.max_attendees && !isRsvped
             ? 'Event Full'
+            : isRsvped
+            ? 'RSVPed - Click to Cancel'
             : 'RSVP / Register'}
         </Button>
       </DialogActions>
